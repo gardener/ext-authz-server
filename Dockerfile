@@ -8,6 +8,7 @@ RUN apk --no-cache add make && \
     apk add git
 COPY . /app
 WORKDIR /app
+ENV CGO_ENABLED=0
 RUN go mod download
 RUN go build
 

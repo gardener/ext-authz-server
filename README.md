@@ -1,5 +1,4 @@
 # ext-authz-server
-
-[![reuse compliant](https://reuse.software/badge/reuse-compliant.svg)](https://reuse.software/)
+[![REUSE status](https://api.reuse.software/badge/github.com/gardener/ext-authz-server)](https://api.reuse.software/info/github.com/gardener/ext-authz-server)
 
 This repository contains the external authorization server for the envoy.

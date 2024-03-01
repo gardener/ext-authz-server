@@ -6,7 +6,9 @@
 
 package auth
 
-import "testing"
+import (
+	"testing"
+)
 
 const service Services = `^outbound\|1194\|\|vpn-seed-server(-[0-4])?\..*\.svc\.cluster\.local$`
 

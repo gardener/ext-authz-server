@@ -2,19 +2,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+ENSURE_GARDENER_MOD                    := $(shell go get github.com/gardener/gardener@$$(go list -m -f "{{.Version}}" github.com/gardener/gardener))
+GARDENER_HACK_DIR                      := $(shell go list -m -f "{{.Dir}}" github.com/gardener/gardener)/hack
 VERSION                                := $(shell cat VERSION)
 REGISTRY                               := europe-docker.pkg.dev/gardener-project/public/gardener
 PREFIX                                 := ext-authz-server
 EXTERNAL_AUTHZ_SERVER_IMAGE_REPOSITORY := $(REGISTRY)/$(PREFIX)
 EXTERNAL_AUTHZ_SERVER_IMAGE_TAG        := $(VERSION)
 REPO_ROOT                              := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+HACK_DIR                               := $(REPO_ROOT)/hack
 
 #########################################
 # Tools                                 #
 #########################################
 
-TOOLS_DIR := hack/tools
-include vendor/github.com/gardener/gardener/hack/tools.mk
+TOOLS_DIR := $(HACK_DIR)/tools
+include $(GARDENER_HACK_DIR)/tools.mk
 
 #################################################################
 # Rules related to binary build, Docker image build and release #
@@ -42,31 +45,30 @@ docker-push:
 # Rules for verification, formatting, linting, testing and cleaning #
 #####################################################################
 
-.PHONY: revendor
-revendor:
+.PHONY: tidy
+tidy:
 	@GO111MODULE=on go mod tidy
-	@GO111MODULE=on go mod vendor
-	@chmod +x $(REPO_ROOT)/vendor/github.com/gardener/gardener/hack/*
+	@mkdir -p $(REPO_ROOT)/.ci/hack && cp $(GARDENER_HACK_DIR)/.ci/* $(REPO_ROOT)/.ci/hack/ && chmod +xw $(REPO_ROOT)/.ci/hack/*
 
 .PHONY: check
 check: $(GOIMPORTS) $(GOLANGCI_LINT)
-	@$(REPO_ROOT)/vendor/github.com/gardener/gardener/hack/check.sh ./cmd/... ./pkg/...
+	@bash $(GARDENER_HACK_DIR)/check.sh ./cmd/... ./pkg/...
 
 .PHONY: format
 format: $(GOIMPORTS) $(GOIMPORTSREVISER)
-	@$(REPO_ROOT)/vendor/github.com/gardener/gardener/hack/format.sh ./cmd ./pkg
+	@bash $(GARDENER_HACK_DIR)/format.sh ./cmd ./pkg
 
 .PHONY: test
 test:
-	@$(REPO_ROOT)/vendor/github.com/gardener/gardener/hack/test.sh ./cmd/... ./pkg/...
+	@bash $(GARDENER_HACK_DIR)/test.sh ./cmd/... ./pkg/...
 
 .PHONY: test-cov
 test-cov:
-	@$(REPO_ROOT)/vendor/github.com/gardener/gardener/hack/test-cover.sh ./cmd/... ./pkg/...
+	@bash $(GARDENER_HACK_DIR)/test-cover.sh ./cmd/... ./pkg/...
 
 .PHONY: test-cov-clean
 test-cov-clean:
-	@$(REPO_ROOT)/vendor/github.com/gardener/gardener/hack/test-cover-clean.sh
+	@bash $(GARDENER_HACK_DIR)/test-cover-clean.sh
 
 .PHONY: verify
 verify: check format test

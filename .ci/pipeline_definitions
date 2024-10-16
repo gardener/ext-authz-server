@@ -1,5 +1,12 @@
 ext-authz-server:
   base_definition:
+    repo:
+      source_labels:
+      - name: cloud.gardener.cnudie/dso/scanning-hints/source_analysis/v1
+        value:
+          policy: skip
+          comment: |
+            we use gosec for sast scanning. See attached log.
     steps:
       verify:
         image: 'golang:1.23.2'
@@ -54,6 +61,17 @@ ext-authz-server:
               image: europe-docker.pkg.dev/gardener-project/releases/gardener/ext-authz-server
         release:
           nextversion: 'bump_minor'
+          assets:
+          - type: build-step-log
+            step_name: verify
+            purposes:
+            - lint
+            - sast
+            - gosec
+            comment: |
+                we use gosec (linter) for SAST scans
+                see: https://github.com/securego/gosec
+                enabled by https://github.com/gardener/ext-authz-server/pull/36
         slack:
           default_channel: 'internal_scp_workspace'
           channel_cfgs:

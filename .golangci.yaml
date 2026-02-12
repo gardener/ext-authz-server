@@ -1,0 +1,28 @@
+version: "2"
+run:
+  concurrency: 4
+linters:
+  disable:
+    - unused
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/gardener/ext-authz-server
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

@@ -60,6 +60,8 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 			return fmt.Errorf("failed to load TLS credentials: %w", err)
 		}
 		serverOpts = append(serverOpts, grpc.Creds(creds))
+	} else {
+		log.Info("TLS certificates not provided, running in plaintext mode...")
 	}
 
 	gs := grpc.NewServer(serverOpts...)

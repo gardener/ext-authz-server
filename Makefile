@@ -11,6 +11,7 @@ VERSION               := $(shell cat VERSION)
 IMAGE_TAG             := $(VERSION)
 EFFECTIVE_VERSION     := $(VERSION)-$(shell git rev-parse HEAD)
 GOARCH                := amd64
+LD_FLAGS              := $(shell $(REPO_ROOT)/hack/get-build-ld-flags.sh)
 
 TOOLS_DIR := hack/tools
 include $(TOOLS_DIR)/tools.mk
@@ -24,13 +25,13 @@ tidy:
 build-local:
 	@CGO_ENABLED=1 go build -o $(EXECUTABLE) \
 		-race \
-		-ldflags "-X 'main.Version=$(EFFECTIVE_VERSION)' -X 'main.ImageTag=$(IMAGE_TAG)'"\
+		-ldflags "-X 'main.Version=$(EFFECTIVE_VERSION)' -X 'main.ImageTag=$(IMAGE_TAG)' $(LD_FLAGS)"\
 		cmd/ext-authz-server/main.go
 
 .PHONY: release
 release:
 	@CGO_ENABLED=0 GOOS=linux GOARCH=$(GOARCH) go build -o $(EXECUTABLE) \
-        -ldflags "-w -X 'main.Version=$(EFFECTIVE_VERSION)' -X 'main.ImageTag=$(IMAGE_TAG)'"\
+        -ldflags "-w -X 'main.Version=$(EFFECTIVE_VERSION)' -X 'main.ImageTag=$(IMAGE_TAG)' $(LD_FLAGS)"\
 		cmd/ext-authz-server/main.go
 
 .PHONY: check

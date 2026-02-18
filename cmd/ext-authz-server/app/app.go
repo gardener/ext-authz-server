@@ -15,6 +15,7 @@ import (
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 
 	extauthzserver "github.com/gardener/ext-authz-server/pkg/ext-authz-server"
@@ -52,7 +53,16 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 		return fmt.Errorf("failed to listen to %d: %w", port, err)
 	}
 
-	gs := grpc.NewServer()
+	var serverOpts []grpc.ServerOption
+	if o.tlsCert != "" && o.tlsKey != "" {
+		creds, err := credentials.NewServerTLSFromFile(o.tlsCert, o.tlsKey)
+		if err != nil {
+			return fmt.Errorf("failed to load TLS credentials: %w", err)
+		}
+		serverOpts = append(serverOpts, grpc.Creds(creds))
+	}
+
+	gs := grpc.NewServer(serverOpts...)
 
 	if o.reflection {
 		reflection.Register(gs)

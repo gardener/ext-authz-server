@@ -14,6 +14,8 @@ type options struct {
 	port       int
 	secretsDir string
 	reflection bool
+	tlsCert    string
+	tlsKey     string
 }
 
 func (o *options) AddFlags(fs *pflag.FlagSet) {
@@ -22,6 +24,8 @@ func (o *options) AddFlags(fs *pflag.FlagSet) {
 	fs.IntVar(&o.port, "port", 10000, "Port of grpc server")
 	fs.StringVar(&o.secretsDir, "secrets-dir", "/secrets", "directory holding basic authentication data")
 	fs.BoolVar(&o.reflection, "grpc-reflection", false, "enable grpc reflection")
+	fs.StringVar(&o.tlsCert, "tls-cert", "/tls/tls.crt", "server certificate to use for tls communication (requires also tls-key)")
+	fs.StringVar(&o.tlsKey, "tls-key", "/tls/tls.key", "private key to use for tls communication (requires also tls-cert)")
 }
 
 func (o *options) Complete() error {

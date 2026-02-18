@@ -5,8 +5,6 @@
 package main
 
 import (
-	"os"
-
 	"github.com/gardener/gardener/cmd/utils"
 	"sigs.k8s.io/controller-runtime/pkg/manager/signals"
 
@@ -17,6 +15,6 @@ func main() {
 	utils.DeduplicateWarnings()
 
 	if err := app.NewCommand().ExecuteContext(signals.SetupSignalHandler()); err != nil {
-		os.Exit(1)
+		panic(err)
 	}
 }

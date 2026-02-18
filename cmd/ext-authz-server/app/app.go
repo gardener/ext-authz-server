@@ -49,7 +49,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	port := o.port
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
-		return fmt.Errorf("failed to listen to %d: %v", port, err)
+		return fmt.Errorf("failed to listen to %d: %w", port, err)
 	}
 
 	gs := grpc.NewServer()

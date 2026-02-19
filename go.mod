@@ -14,13 +14,13 @@ require (
 	golang.org/x/crypto v0.48.0
 	golang.org/x/tools v0.42.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20251202230838-ff82c1b0f217
-	google.golang.org/grpc v1.78.0
+	google.golang.org/grpc v1.79.1
 	sigs.k8s.io/controller-runtime v0.23.1
 )
 
 require (
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
-	github.com/cncf/xds/go v0.0.0-20251110193048-8bfbf64dc13e // indirect
+	github.com/cncf/xds/go v0.0.0-20251210132809-ee656c7534f5 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/elliotchance/orderedmap/v3 v3.1.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.3.0 // indirect

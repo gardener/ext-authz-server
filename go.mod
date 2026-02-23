@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0
-	github.com/gardener/gardener v1.136.1
+	github.com/gardener/gardener v1.136.2
 	github.com/go-logr/logr v1.4.3
 	github.com/onsi/ginkgo/v2 v2.28.1
 	github.com/onsi/gomega v1.39.1

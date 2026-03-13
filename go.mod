@@ -14,7 +14,7 @@ require (
 	golang.org/x/crypto v0.49.0
 	golang.org/x/tools v0.42.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260128011058-8636f8732409
-	google.golang.org/grpc v1.79.1
+	google.golang.org/grpc v1.79.2
 	sigs.k8s.io/controller-runtime v0.23.1
 )
 

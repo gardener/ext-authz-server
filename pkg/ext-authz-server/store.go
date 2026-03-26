@@ -58,7 +58,7 @@ func readSecrets(dir fs.FS) (map[string]auth, error) {
 		name := e.Name()
 		data, err := fs.ReadFile(dir, name)
 		if err != nil {
-			return nil, fmt.Errorf("falied reading file %s: %w", name, err)
+			return nil, fmt.Errorf("failed reading file %s: %w", name, err)
 		}
 		username, password, ok := parseBasicAuth(data)
 		if !ok {

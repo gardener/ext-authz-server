@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+ENSURE_GARDENER_MOD   := $(shell go get github.com/gardener/gardener@$$(go list -m -f "{{.Version}}" github.com/gardener/gardener))
+GARDENER_HACK_DIR     := $(shell go list -m -f "{{.Dir}}" github.com/gardener/gardener)/hack
 REGISTRY              := europe-docker.pkg.dev/gardener-project/public
 EXECUTABLE            := ext-authz-server
 PROJECT               := github.com/gardener/ext-authz-server
@@ -34,6 +36,14 @@ release:
         -ldflags "-w -X 'main.Version=$(EFFECTIVE_VERSION)' -X 'main.ImageTag=$(IMAGE_TAG)' $(LD_FLAGS)"\
 		cmd/ext-authz-server/main.go
 
+.PHONY: clean
+clean:
+	@bash $(GARDENER_HACK_DIR)/clean.sh ./cmd/... ./pkg/...
+
+.PHONY: check-generate
+check-generate:
+	@bash $(GARDENER_HACK_DIR)/check-generate.sh $(REPO_ROOT)
+
 .PHONY: check
 check: $(GOIMPORTS) $(GOLANGCI_LINT)
 	go vet ./...
@@ -55,6 +65,7 @@ docker-images-linux-amd64:
 .PHONY: generate
 generate: $(MOCKGEN)
 	@MOCKGEN=$(shell realpath $(MOCKGEN)) go generate ./pkg/...
+	@GARDENER_HACK_DIR=$(GARDENER_HACK_DIR) RENOVATE_CONFIG=$(REPO_ROOT)/.github/renovate.json5 bash $(GARDENER_HACK_DIR)/generate-renovate-ignore-deps.sh
 
 .PHONY: sast
 sast: $(GOSEC)
@@ -75,4 +86,4 @@ update-dependencies:
 	@make tidy
 
 .PHONY: verify
-verify: check format test sast-report
+verify: check-generate check format test sast-report

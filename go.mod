@@ -25,6 +25,7 @@ require (
 	github.com/elliotchance/orderedmap/v3 v3.1.0 // indirect
 	github.com/envoyproxy/protoc-gen-validate v1.3.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
+	github.com/gardener/gardener/pkg/apis v1.140.0 // indirect
 	github.com/go-logr/zapr v1.3.0 // indirect
 	github.com/go-task/slim-sprig/v3 v3.0.0 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect

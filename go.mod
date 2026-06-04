@@ -4,7 +4,7 @@ go 1.26.0
 
 require (
 	github.com/envoyproxy/go-control-plane/envoy v1.37.0
-	github.com/gardener/gardener v1.143.1
+	github.com/gardener/gardener v1.144.0
 	github.com/go-logr/logr v1.4.3
 	github.com/onsi/ginkgo/v2 v2.29.0
 	github.com/onsi/gomega v1.41.0
@@ -13,7 +13,7 @@ require (
 	go.uber.org/mock v0.6.0
 	golang.org/x/crypto v0.52.0
 	golang.org/x/tools v0.45.0
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260406210006-6f92a3bedf2d
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260427160629-7cedc36a6bc4
 	google.golang.org/grpc v1.80.0
 	sigs.k8s.io/controller-runtime v0.23.3
 )

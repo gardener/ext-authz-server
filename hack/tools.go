@@ -9,6 +9,7 @@
 package tools
 
 import (
+	_ "github.com/gardener/gardener/hack/tools"
 	_ "go.uber.org/mock/mockgen"
 	_ "golang.org/x/tools/cmd/goimports"
 )

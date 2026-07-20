@@ -2,18 +2,19 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-ENSURE_GARDENER_MOD   := $(shell go get github.com/gardener/gardener@$$(go list -m -f "{{.Version}}" github.com/gardener/gardener))
-GARDENER_HACK_DIR     := $(shell go list -m -f "{{.Dir}}" github.com/gardener/gardener)/hack
-REGISTRY              := europe-docker.pkg.dev/gardener-project/public
-EXECUTABLE            := ext-authz-server
-PROJECT               := github.com/gardener/ext-authz-server
-IMAGE_REPOSITORY      := $(REGISTRY)/gardener/ext-authz-server
-REPO_ROOT             := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
-VERSION               := $(shell cat VERSION)
-IMAGE_TAG             := $(VERSION)
-EFFECTIVE_VERSION     := $(VERSION)-$(shell git rev-parse HEAD)
-GOARCH                := amd64
-LD_FLAGS              := $(shell $(REPO_ROOT)/hack/get-build-ld-flags.sh)
+ENSURE_GARDENER_MOD   		:= $(shell go get github.com/gardener/gardener@$$(go list -m -f "{{.Version}}" github.com/gardener/gardener))
+ENSURE_GARDENER_TOOLS_MOD   := $(shell go get github.com/gardener/gardener/hack/tools@$$(go list -m -f "{{.Version}}" github.com/gardener/gardener/hack/tools))
+GARDENER_HACK_DIR     		:= $(shell go list -m -f "{{.Dir}}" github.com/gardener/gardener)/hack
+REGISTRY              		:= europe-docker.pkg.dev/gardener-project/public
+EXECUTABLE            		:= ext-authz-server
+PROJECT               		:= github.com/gardener/ext-authz-server
+IMAGE_REPOSITORY      		:= $(REGISTRY)/gardener/ext-authz-server
+REPO_ROOT             		:= $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+VERSION               		:= $(shell cat VERSION)
+IMAGE_TAG             		:= $(VERSION)
+EFFECTIVE_VERSION     		:= $(VERSION)-$(shell git rev-parse HEAD)
+GOARCH                		:= amd64
+LD_FLAGS              		:= $(shell $(REPO_ROOT)/hack/get-build-ld-flags.sh)
 
 TOOLS_DIR := hack/tools
 include $(TOOLS_DIR)/tools.mk

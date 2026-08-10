@@ -32,6 +32,12 @@ func NewCommand() *cobra.Command {
 		Use: Name,
 
 		RunE: func(cmd *cobra.Command, _ []string) error {
+			if err := opts.Complete(); err != nil {
+				return err
+			}
+			if err := opts.Validate(); err != nil {
+				return err
+			}
 			log, err := initrun.InitRun(cmd, opts, Name)
 			if err != nil {
 				return err
@@ -47,10 +53,21 @@ func NewCommand() *cobra.Command {
 }
 
 func run(ctx context.Context, log logr.Logger, o *options) error {
-	port := o.port
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	var (
+		listener net.Listener
+		addr     string
+		err      error
+	)
+
+	if o.socketPath != "" {
+		addr = o.socketPath
+		listener, err = net.Listen("unix", addr)
+	} else {
+		addr = fmt.Sprintf(":%d", o.port)
+		listener, err = net.Listen("tcp", addr)
+	}
 	if err != nil {
-		return fmt.Errorf("failed to listen to %d: %w", port, err)
+		return fmt.Errorf("failed to listen on %s: %w", addr, err)
 	}
 
 	var serverOpts []grpc.ServerOption
@@ -75,7 +92,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	}
 	envoy_service_auth_v3.RegisterAuthorizationServer(gs, authsrv)
 
-	log.Info("Starting gRPC server", "port", port, "reflection", o.reflection)
+	log.Info("Starting gRPC server", "address", addr, "reflection", o.reflection)
 
 	errorChannel := make(chan error)
 	go func(errc chan error) {

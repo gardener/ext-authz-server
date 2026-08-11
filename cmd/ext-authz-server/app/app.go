@@ -97,7 +97,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	log.Info("Starting gRPC server", "port", port, "socket path", o.socketPath, "reflection", o.reflection)
 
-	errorChannel := make(chan error)
+	errorChannel := make(chan error, len(listeners))
 	for _, l := range listeners {
 		go func(listener net.Listener) {
 			errorChannel <- gs.Serve(listener)

@@ -95,7 +95,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	}
 	envoy_service_auth_v3.RegisterAuthorizationServer(gs, authsrv)
 
-	log.Info("Starting gRPC server", "port", port, "socket path", o.unixSocket, "reflection", o.reflection)
+	log.Info("Starting gRPC server", "port", port, "unix socket path", o.unixSocket, "reflection", o.reflection)
 
 	errorChannel := make(chan error, len(listeners))
 	for _, l := range listeners {

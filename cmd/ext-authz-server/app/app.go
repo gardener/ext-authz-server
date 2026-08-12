@@ -84,6 +84,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	healthServer := health.NewServer()
 	grpc_health_v1.RegisterHealthServer(gs, healthServer)
+	healthServer.SetServingStatus("envoy.service.auth.v3.Authorization", grpc_health_v1.HealthCheckResponse_SERVING)
 
 	if o.reflection {
 		reflection.Register(gs)

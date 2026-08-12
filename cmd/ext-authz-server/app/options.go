@@ -16,7 +16,7 @@ type options struct {
 	reflection bool
 	tlsCert    string
 	tlsKey     string
-	socketPath string
+	unixSocket string
 }
 
 func (o *options) AddFlags(fs *pflag.FlagSet) {
@@ -27,7 +27,7 @@ func (o *options) AddFlags(fs *pflag.FlagSet) {
 	fs.BoolVar(&o.reflection, "grpc-reflection", false, "enable grpc reflection")
 	fs.StringVar(&o.tlsCert, "tls-cert", "/tls/tls.crt", "server certificate to use for tls communication (requires also tls-key)")
 	fs.StringVar(&o.tlsKey, "tls-key", "/tls/tls.key", "private key to use for tls communication (requires also tls-cert)")
-	fs.StringVar(&o.socketPath, "socket-path", "", "unix domain socket path to listen on")
+	fs.StringVar(&o.unixSocket, "unix-socket-path", "", "unix domain socket path to listen on")
 }
 
 func (o *options) Complete() error {

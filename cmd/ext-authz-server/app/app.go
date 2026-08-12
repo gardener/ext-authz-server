@@ -51,10 +51,10 @@ func NewCommand() *cobra.Command {
 func run(ctx context.Context, log logr.Logger, o *options) error {
 	var listeners []net.Listener
 
-	if o.socketPath != "" {
-		unixListener, err := net.Listen("unix", o.socketPath)
+	if o.unixSocket != "" {
+		unixListener, err := net.Listen("unix", o.unixSocket)
 		if err != nil {
-			return fmt.Errorf("failed to listen on %s: %w", o.socketPath, err)
+			return fmt.Errorf("failed to listen on %s: %w", o.unixSocket, err)
 		}
 		listeners = append(listeners, unixListener)
 	}
@@ -68,7 +68,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	// TLS is only supported for TCP-only mode
 	var serverOpts []grpc.ServerOption
-	if o.socketPath != "" {
+	if o.unixSocket != "" {
 		log.Info("TLS is not supported with unix domain sockets, running in plaintext mode...")
 	} else if o.tlsCert != "" && o.tlsKey != "" {
 		creds, err := credentials.NewServerTLSFromFile(o.tlsCert, o.tlsKey)
@@ -95,7 +95,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	}
 	envoy_service_auth_v3.RegisterAuthorizationServer(gs, authsrv)
 
-	log.Info("Starting gRPC server", "port", port, "socket path", o.socketPath, "reflection", o.reflection)
+	log.Info("Starting gRPC server", "port", port, "socket path", o.unixSocket, "reflection", o.reflection)
 
 	errorChannel := make(chan error, len(listeners))
 	for _, l := range listeners {

@@ -106,7 +106,7 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	select {
 	case <-ctx.Done():
 		log.Info("Graceful shutdown")
-		healthServer.SetServingStatus("", grpc_health_v1.HealthCheckResponse_NOT_SERVING)
+		healthServer.Shutdown()
 		gs.GracefulStop()
 		return nil
 	case err := <-errorChannel:

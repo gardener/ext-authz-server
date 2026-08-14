@@ -6,6 +6,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -14,6 +15,7 @@ import (
 	"github.com/gardener/gardener/cmd/utils/initrun"
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/health"
@@ -97,21 +99,26 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	log.Info("Starting gRPC server", "port", port, "unix socket path", o.unixSocket, "reflection", o.reflection)
 
-	errorChannel := make(chan error, len(listeners))
-	for _, l := range listeners {
-		go func(listener net.Listener) {
-			errorChannel <- gs.Serve(listener)
-		}(l)
+	eg, egCtx := errgroup.WithContext(ctx)
+	for _, listener := range listeners {
+		eg.Go(func() error {
+			err = gs.Serve(listener)
+			if err := gs.Serve(listener); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+				return err
+			}
+			return nil
+		})
 	}
 
-	select {
-	case <-ctx.Done():
-		log.Info("Graceful shutdown")
+	eg.Go(func() error {
+		<-egCtx.Done()
+		if errors.Is(ctx.Err(), context.Canceled) {
+			log.Info("Graceful shutdown")
+		}
 		healthServer.Shutdown()
 		gs.GracefulStop()
 		return nil
-	case err := <-errorChannel:
-		gs.Stop()
-		return err
-	}
+	})
+
+	return eg.Wait()
 }

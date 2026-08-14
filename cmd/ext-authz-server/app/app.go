@@ -54,10 +54,14 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	var listeners []net.Listener
 
 	if o.unixSocket != "" {
+		// Cleanup possible leftovers
+		_ = os.Remove(o.unixSocket)
+
 		unixListener, err := net.Listen("unix", o.unixSocket)
 		if err != nil {
 			return fmt.Errorf("failed to listen on %s: %w", o.unixSocket, err)
 		}
+		defer os.Remove(o.unixSocket)
 		listeners = append(listeners, unixListener)
 	}
 

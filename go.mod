@@ -3,7 +3,7 @@ module github.com/gardener/ext-authz-server
 go 1.26.5
 
 require (
-	github.com/envoyproxy/go-control-plane/envoy v1.37.0
+	github.com/envoyproxy/go-control-plane/envoy v1.39.0
 	github.com/gardener/gardener v1.149.0
 	github.com/gardener/gardener/hack/tools v1.149.0
 	github.com/go-logr/logr v1.4.3

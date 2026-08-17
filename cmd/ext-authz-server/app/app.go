@@ -101,12 +101,15 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	}
 	envoy_service_auth_v3.RegisterAuthorizationServer(gs, authsrv)
 
-	log.Info("Starting gRPC server", "port", port, "unix socket path", o.unixSocket, "reflection", o.reflection)
+	if o.unixSocket != "" {
+		log.Info("Starting gRPC server", "port", port, "unix socket path", o.unixSocket, "reflection", o.reflection)
+	} else {
+		log.Info("Starting gRPC server", "port", port, "reflection", o.reflection)
+	}
 
 	eg, egCtx := errgroup.WithContext(ctx)
 	for _, listener := range listeners {
 		eg.Go(func() error {
-			err = gs.Serve(listener)
 			if err := gs.Serve(listener); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
 				return err
 			}

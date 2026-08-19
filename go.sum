@@ -109,10 +109,10 @@ github.com/gardener/cert-management/pkg/apis v0.27.0 h1:22OOOjbWaeiAVCC1QNYwf3JV
 github.com/gardener/cert-management/pkg/apis v0.27.0/go.mod h1:hTI4e+Z12ju3rpEEdke6IRXPkCoXYuM2q1UlXERS5wI=
 github.com/gardener/etcd-druid/api v0.37.1 h1:FHaE88vUvcekO1Kcl1ad8VdpL+GYuhLiSEG/MF247pg=
 github.com/gardener/etcd-druid/api v0.37.1/go.mod h1:nFKkRStJEXoYE0xGf2Y5Ela1EayAdsfZAqfK+bBXV/M=
-github.com/gardener/gardener v1.149.1 h1:AW+RL0YtSRuHZqj0clVEqB1M1FVwmJDulCFfVaz03ag=
-github.com/gardener/gardener v1.149.1/go.mod h1:tXquTwbfbYIL75hcg8DnVMrWOgo37Aihe4KN4ui58jo=
-github.com/gardener/gardener/hack/tools v1.149.1 h1:8IO0qWwFC1yyBT52UW52G9W/4a7+Y5Ny63rijRHaqbE=
-github.com/gardener/gardener/hack/tools v1.149.1/go.mod h1:AScKS5MFZnOwia6F/6W3s3Agg3K5l9n9bgd8Tqyie5o=
+github.com/gardener/gardener v1.149.2 h1:b/5rqf35G1i9gydpgvGM6waQrzSOyp/gmHGPflqJZWI=
+github.com/gardener/gardener v1.149.2/go.mod h1:tXquTwbfbYIL75hcg8DnVMrWOgo37Aihe4KN4ui58jo=
+github.com/gardener/gardener/hack/tools v1.149.2 h1:ta00KJqoSaMQ8wRIehEy7EGlqoV7sjaM3PD7zgrYblw=
+github.com/gardener/gardener/hack/tools v1.149.2/go.mod h1:AScKS5MFZnOwia6F/6W3s3Agg3K5l9n9bgd8Tqyie5o=
 github.com/gardener/gardener/pkg/apis v1.147.0 h1:9mlwQhVRxYIkE0G6YZdwIMdju1PxJGdl4EHDdnSPdxM=
 github.com/gardener/gardener/pkg/apis v1.147.0/go.mod h1:qaMyCp4H/Gjct9tF57r5GoaV8YI0IrO6snnQQA9pgEo=
 github.com/gardener/machine-controller-manager v0.62.1 h1:TQ4Qs9aaYTqSkqFownIaEAvnrYoNpBMcp7ZMYVEgUWM=

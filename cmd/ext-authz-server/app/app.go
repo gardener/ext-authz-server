@@ -6,6 +6,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net"
 	"os"
@@ -14,8 +15,11 @@ import (
 	"github.com/gardener/gardener/cmd/utils/initrun"
 	"github.com/go-logr/logr"
 	"github.com/spf13/cobra"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
 	extauthzserver "github.com/gardener/ext-authz-server/pkg/ext-authz-server"
@@ -47,14 +51,32 @@ func NewCommand() *cobra.Command {
 }
 
 func run(ctx context.Context, log logr.Logger, o *options) error {
-	port := o.port
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
-	if err != nil {
-		return fmt.Errorf("failed to listen to %d: %w", port, err)
+	var listeners []net.Listener
+
+	if o.unixSocket != "" {
+		// Cleanup possible leftovers
+		_ = os.Remove(o.unixSocket)
+
+		unixListener, err := net.Listen("unix", o.unixSocket)
+		if err != nil {
+			return fmt.Errorf("failed to listen on %s: %w", o.unixSocket, err)
+		}
+		defer os.Remove(o.unixSocket)
+		listeners = append(listeners, unixListener)
 	}
 
+	port := o.port
+	tcpListener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		return fmt.Errorf("failed to listen on %d: %w", port, err)
+	}
+	listeners = append(listeners, tcpListener)
+
+	// TLS is only supported for TCP-only mode
 	var serverOpts []grpc.ServerOption
-	if o.tlsCert != "" && o.tlsKey != "" {
+	if o.unixSocket != "" {
+		log.Info("TLS is not supported with unix domain sockets, running in plaintext mode...")
+	} else if o.tlsCert != "" && o.tlsKey != "" {
 		creds, err := credentials.NewServerTLSFromFile(o.tlsCert, o.tlsKey)
 		if err != nil {
 			return fmt.Errorf("failed to load TLS credentials: %w", err)
@@ -66,6 +88,10 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	gs := grpc.NewServer(serverOpts...)
 
+	healthServer := health.NewServer()
+	grpc_health_v1.RegisterHealthServer(gs, healthServer)
+	healthServer.SetServingStatus("envoy.service.auth.v3.Authorization", grpc_health_v1.HealthCheckResponse_SERVING)
+
 	if o.reflection {
 		reflection.Register(gs)
 	}
@@ -75,20 +101,31 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	}
 	envoy_service_auth_v3.RegisterAuthorizationServer(gs, authsrv)
 
-	log.Info("Starting gRPC server", "port", port, "reflection", o.reflection)
+	if o.unixSocket != "" {
+		log.Info("Starting gRPC server", "port", port, "unix socket path", o.unixSocket, "reflection", o.reflection)
+	} else {
+		log.Info("Starting gRPC server", "port", port, "reflection", o.reflection)
+	}
 
-	errorChannel := make(chan error)
-	go func(errc chan error) {
-		defer close(errc)
-		errc <- gs.Serve(listener)
-	}(errorChannel)
+	eg, egCtx := errgroup.WithContext(ctx)
+	for _, listener := range listeners {
+		eg.Go(func() error {
+			if err := gs.Serve(listener); err != nil && !errors.Is(err, grpc.ErrServerStopped) {
+				return err
+			}
+			return nil
+		})
+	}
 
-	select {
-	case <-ctx.Done():
-		log.Info("Graceful shutdown")
+	eg.Go(func() error {
+		<-egCtx.Done()
+		if errors.Is(ctx.Err(), context.Canceled) {
+			log.Info("Graceful shutdown")
+		}
+		healthServer.Shutdown()
 		gs.GracefulStop()
 		return nil
-	case err := <-errorChannel:
-		return err
-	}
+	})
+
+	return eg.Wait()
 }

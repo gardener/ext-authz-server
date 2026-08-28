@@ -5,7 +5,7 @@ go 1.26.5
 require (
 	github.com/envoyproxy/go-control-plane/envoy v1.39.0
 	github.com/gardener/gardener v1.150.0
-	github.com/gardener/gardener/hack/tools v1.149.3
+	github.com/gardener/gardener/hack/tools v1.150.0
 	github.com/go-logr/logr v1.4.4
 	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.1

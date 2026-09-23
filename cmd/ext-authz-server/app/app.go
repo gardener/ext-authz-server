@@ -55,7 +55,9 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	if o.unixSocket != "" {
 		// Cleanup possible leftovers
-		_ = os.Remove(o.unixSocket)
+		if err := os.Remove(o.unixSocket); err != nil && !errors.Is(err, os.ErrNotExist) {
+			return fmt.Errorf("failed to remove stale socket %s: %w", o.unixSocket, err)
+		}
 
 		unixListener, err := net.Listen("unix", o.unixSocket)
 		if err != nil {
@@ -65,6 +67,8 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 		listeners = append(listeners, unixListener)
 	}
 
+	// Always open a port for kubelet probes even if using a unix domain socket.
+	// Cannot be bound to localhost because kubelet dials the pod IP, not localhost.
 	port := o.port
 	tcpListener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
@@ -101,11 +105,11 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 	}
 	envoy_service_auth_v3.RegisterAuthorizationServer(gs, authsrv)
 
+	fields := []any{"port", port, "reflection", o.reflection}
 	if o.unixSocket != "" {
-		log.Info("Starting gRPC server", "port", port, "unix socket path", o.unixSocket, "reflection", o.reflection)
-	} else {
-		log.Info("Starting gRPC server", "port", port, "reflection", o.reflection)
+		fields = append(fields, "unix socket path", o.unixSocket)
 	}
+	log.Info("Starting gRPC server", fields...)
 
 	eg, egCtx := errgroup.WithContext(ctx)
 	for _, listener := range listeners {

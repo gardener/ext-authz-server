@@ -55,7 +55,8 @@ func run(ctx context.Context, log logr.Logger, o *options) error {
 
 	if o.unixSocket != "" {
 		// Cleanup possible leftovers
-		if err := os.Remove(o.unixSocket); err != nil && !errors.Is(err, os.ErrNotExist) {
+		err := os.Remove(o.unixSocket)
+		if err != nil && !errors.Is(err, os.ErrNotExist) {
 			return fmt.Errorf("failed to remove stale socket %s: %w", o.unixSocket, err)
 		}
 

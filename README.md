@@ -17,3 +17,5 @@ You can configure the logging level of the gRPC server via the following environ
 $ export GRPC_GO_LOG_VERBOSITY_LEVEL=99
 $ export GRPC_GO_LOG_SEVERITY_LEVEL=info
 ```
+
+Alternatively, enable Unix domain sockets using the `--unix-socket-path` flag. This disables TLS but keeps the TCP listener active for health checks. In this mode ext-authz-server is meant to be used as sidecar container to Envoy. Because kubelet probes (readiness / liveness) connect through the pod IP, the TCP listener cannot be bound to localhost. Restrict access to the pod via a NetworkPolicy instead.

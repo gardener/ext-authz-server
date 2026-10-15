@@ -3,7 +3,7 @@ module github.com/gardener/ext-authz-server
 go 1.26.5
 
 require (
-	github.com/envoyproxy/go-control-plane/envoy v1.39.0
+	github.com/envoyproxy/go-control-plane/envoy v1.40.0
 	github.com/gardener/gardener v1.152.1
 	github.com/gardener/gardener/hack/tools v1.152.1
 	github.com/go-logr/logr v1.4.4
@@ -15,7 +15,7 @@ require (
 	golang.org/x/crypto v0.57.0
 	golang.org/x/tools v0.50.0
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688
-	google.golang.org/grpc v1.83.2
+	google.golang.org/grpc v1.84.0
 	sigs.k8s.io/controller-runtime v0.24.1
 )
 
@@ -59,7 +59,7 @@ require (
 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.24.1 // indirect
-	github.com/prometheus/client_model v0.6.2 // indirect
+	github.com/prometheus/client_model v0.6.3 // indirect
 	github.com/prometheus/common v0.71.0 // indirect
 	github.com/prometheus/procfs v0.21.1 // indirect
 	github.com/x448/float16 v0.8.4 // indirect

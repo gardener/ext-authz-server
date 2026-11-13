@@ -29,6 +29,13 @@
       matchPackageNames: [
         '/^github\\.com/gardener/',
       ],
+    },
+    {
+      // Auto-merge patch and digest updates.
+      matchManagers: ["gomod"],
+      matchPackageNames: [
+        '/^github\\.com/gardener/',
+      ],
       "matchUpdateTypes": ["patch", "digest"],
       "automerge": true
     },
